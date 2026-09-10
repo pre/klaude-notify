@@ -1,0 +1,22 @@
+{
+  "hooks": {
+    "Notification": [
+      { "hooks": [ { "type": "command", "command": "__CLAUDE_DIR__/hooks/notify-waiting.sh" } ] }
+    ],
+    "PreToolUse": [
+      { "matcher": "*", "hooks": [ { "type": "command", "command": "__CLAUDE_DIR__/hooks/cancel-waiting.sh" } ] }
+    ],
+    "PostToolUse": [
+      { "matcher": "*", "hooks": [ { "type": "command", "command": "__CLAUDE_DIR__/hooks/cancel-waiting.sh" } ] }
+    ],
+    "UserPromptSubmit": [
+      { "hooks": [ { "type": "command", "command": "__CLAUDE_DIR__/hooks/cancel-waiting.sh" } ] }
+    ],
+    "Stop": [
+      { "hooks": [
+        { "type": "command", "command": "__CLAUDE_DIR__/hooks/cancel-waiting.sh" },
+        { "type": "command", "command": "__CLAUDE_DIR__/hooks/play.sh __CLAUDE_DIR__/assets/warcraft2_wahoo.wav" }
+      ] }
+    ]
+  }
+}
