@@ -37,6 +37,28 @@ when you have your own hooks for these events.
 The `PreToolUse`, `PostToolUse` and `UserPromptSubmit` hooks count the tools
 that run. They keep the hooks silent while Claude waits for its own command.
 
+## Main agent only
+
+The hooks play a sound for the main agent only. Subagents (the `Agent` tool)
+share the `session_id` of the main agent, but their hook input has the
+`agent_id` and `agent_type` fields. Each hook script stops at once when it
+finds `agent_id`, so a subagent does not play a sound and does not change the
+tool counter of the session.
+
+The main agent stops each time it waits for a background subagent or a
+background command. The Stop hook input lists these in `background_tasks`.
+The `notify-stop.sh` script stays silent while a task in that list has the
+status `running`, and plays the sound only when the main agent has no
+background work left. A background command that never ends, for example a
+development server, keeps the Stop sound silent until it ends.
+
+A finished background task comes back to the main agent as a task
+notification prompt. When two tasks finish at the same time, the second
+notification arrives directly after the main agent stops. In a turn that a
+task notification started, `notify-stop.sh` waits 3 seconds before it plays
+the sound, and the next notification or tool use cancels it. Set
+`CLAUDE_STOP_GRACE` to change the wait in seconds.
+
 ## Control the sound
 
 ```sh
@@ -48,4 +70,5 @@ that run. They keep the hooks silent while Claude waits for its own command.
 ~/.claude/hooks/sound.sh status     # show the state
 ```
 
-Run `hooks/test-sound.sh` to check the mute and volume logic.
+Run `hooks/test-sound.sh` to check the mute and volume logic and
+`hooks/test-hooks.sh` to check the main agent and subagent logic.

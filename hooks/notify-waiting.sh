@@ -4,10 +4,14 @@ set -u
 HERE="$(cd "$(dirname "$0")" && pwd)"
 
 input=$(cat)
-session_id=$(printf '%s' "$input" | grep -o '"session_id"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"\([^"]*\)"$/\1/')
+. "$HERE/hooklib.sh"
+
+in_subagent && exit 0
+
+session_id=$(hook_field session_id)
 [ -z "$session_id" ] && session_id="default"
 
-notification_type=$(printf '%s' "$input" | grep -o '"notification_type"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"\([^"]*\)"$/\1/')
+notification_type=$(hook_field notification_type)
 
 pidfile="/tmp/claude-notify-${session_id}.pid"
 stopfile="/tmp/claude-stopped-${session_id}"

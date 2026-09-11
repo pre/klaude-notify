@@ -15,7 +15,7 @@
     "Stop": [
       { "hooks": [
         { "type": "command", "command": "__CLAUDE_DIR__/hooks/cancel-waiting.sh" },
-        { "type": "command", "command": "__CLAUDE_DIR__/hooks/play.sh __CLAUDE_DIR__/assets/warcraft2_wahoo.wav" }
+        { "type": "command", "command": "__CLAUDE_DIR__/hooks/notify-stop.sh __CLAUDE_DIR__/assets/warcraft2_wahoo.wav" }
       ] }
     ]
   }
