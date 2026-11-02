@@ -45,6 +45,11 @@ when you have your own hooks for these events.
 | Claude waits for you (`Notification`) | `warcraft2_awaiting_orders.wav` |
 | Claude waits for you 60 seconds more | `warcraft2_sire.wav` |
 
+The sounds are from the game Warcraft II. Blizzard Entertainment owns the
+copyright of the sound files, and the MIT License of this repository does not
+apply to them. To use other sounds, put your own wav files with the same names
+in `assets/` before you run `./install.sh`.
+
 The `PreToolUse`, `PostToolUse` and `UserPromptSubmit` hooks count the tools
 that run. They keep the hooks silent while Claude waits for its own command.
 
