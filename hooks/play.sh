@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Play a wav through Windows from WSL. Usage: play.sh /path/to/file.wav
+# Play a wav with the platform player. Usage: play.sh /path/to/file.wav
 # Silent while /tmp/claude-mute exists; volume from /tmp/claude-volume. See sound.sh.
 set -u
 [ -f "$1" ] || exit 0
@@ -19,20 +19,7 @@ case "$vol" in
   '' | *[!0-9.]*) vol=0.1 ;;
 esac
 
-win=$(wslpath -w "$1")
+[ -n "${CLAUDE_PLAY_DRYRUN-}" ] && { echo "play $1 vol=$vol"; exit 0; }
 
-[ -n "${CLAUDE_PLAY_DRYRUN-}" ] && { echo "play $win vol=$vol"; exit 0; }
-
-powershell.exe -NoProfile -Command "
-Add-Type -AssemblyName presentationCore
-\$p = New-Object System.Windows.Media.MediaPlayer
-\$p.Open([uri]'$win')
-\$p.Volume = $vol
-for (\$i = 0; \$i -lt 20 -and -not \$p.NaturalDuration.HasTimeSpan; \$i++) { Start-Sleep -Milliseconds 50 }
-\$p.Play()
-\$d = 5
-if (\$p.NaturalDuration.HasTimeSpan) { \$d = \$p.NaturalDuration.TimeSpan.TotalSeconds + 0.3 }
-Start-Sleep -Seconds \$d
-" >/dev/null 2>&1
-
-exit 0
+# install.sh copies the WSL or the Linux player here.
+exec "$(dirname "$0")/player.sh" "$1" "$vol"

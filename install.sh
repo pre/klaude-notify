@@ -20,8 +20,16 @@ if ! printf '%s' "$fragment" | jq -e '.hooks | type == "object" and length > 0' 
   exit 1
 fi
 
+if grep -qi microsoft /proc/sys/kernel/osrelease 2>/dev/null; then
+  platform=wsl
+else
+  platform=linux
+  command -v pw-play >/dev/null || echo "Warning: pw-play not found, the hooks stay silent" >&2
+fi
+
 mkdir -p "$config_dir/hooks" "$config_dir/assets" "$(dirname "$target")"
 cp "$src_dir"/hooks/*.sh "$config_dir/hooks/"
+cp "$src_dir/players/$platform.sh" "$config_dir/hooks/player.sh"
 chmod +x "$config_dir"/hooks/*.sh
 cp "$src_dir"/assets/*.wav "$config_dir/assets/"
 
@@ -35,4 +43,4 @@ cp "$target" "$target.bak"
 printf '%s' "$fragment" | jq -s '.[0] * .[1]' "$target" - > "$target.tmp"
 mv "$target.tmp" "$target"
 
-echo "Installed hooks and sounds to $config_dir, settings: $target (backup: $target.bak)"
+echo "Installed $platform hooks and sounds to $config_dir, settings: $target (backup: $target.bak)"

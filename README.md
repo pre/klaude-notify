@@ -4,7 +4,18 @@ Plays a sound when Claude Code finishes a task or waits for you. The
 repository contains the hook scripts, the sounds and an installer that adds
 the hooks to any Claude Code profile.
 
-The sound goes through Windows PowerShell, so the hooks work in WSL.
+The hooks work in WSL and in Linux. The installer finds the platform and
+installs one of two players as `hooks/player.sh`:
+
+| Platform | Player | Plays the sound with |
+| --- | --- | --- |
+| WSL | `players/wsl.sh` | Windows PowerShell |
+| Linux | `players/linux.sh` | `pw-play` (PipeWire) |
+
+The installer finds WSL when `/proc/sys/kernel/osrelease` contains
+`microsoft`. On other machines it installs the Linux player. If `pw-play` is
+not available, the installer shows a warning and the hooks do not play a
+sound.
 
 ## Installation
 
