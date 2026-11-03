@@ -17,6 +17,12 @@ The installer finds WSL when `/proc/sys/kernel/osrelease` contains
 not available, the installer shows a warning and the hooks do not play a
 sound.
 
+PipeWire suspends an idle sink. A suspended sink drops the start of a sound
+while it wakes up, and Bluetooth headphones need about 0.5 seconds. The Linux
+player first plays a silent copy of the sound to wake the sink. It starts the
+sound 0.8 seconds later. Set `CLAUDE_SOUND_WAKE` to change this delay in
+seconds.
+
 ## Installation
 
 The installer needs `jq`. Run `./install.sh`. The script copies the scripts
