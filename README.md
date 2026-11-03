@@ -54,7 +54,8 @@ when you have your own hooks for these events.
 The sounds are from the game Warcraft II. Blizzard Entertainment owns the
 copyright of the sound files, and the MIT License of this repository does not
 apply to them. To use other sounds, put your own wav files with the same names
-in `assets/` before you run `./install.sh`.
+in `assets/` before you run `./install.sh`. Use 16-bit wav files. On Linux,
+`pw-play` adds a loud click to the end of an 8-bit wav file.
 
 The `PreToolUse`, `PostToolUse` and `UserPromptSubmit` hooks count the tools
 that run. They keep the hooks silent while Claude waits for its own command.
