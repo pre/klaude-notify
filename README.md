@@ -39,9 +39,15 @@ CLAUDE_CONFIG_DIR=~/.claude-work ./install.sh   # another profile
 ```
 
 The script checks that `hooks.json` and the target file are valid JSON before
-it changes the target. The merge replaces the `Notification`, `PreToolUse`,
-`PostToolUse`, `UserPromptSubmit` and `Stop` hook lists. Use the backup file
-when you have your own hooks for these events.
+it changes the target. The merge keeps the hooks of other tools. It replaces
+only the hooks of an earlier klaude-notify install, that is, a hook whose
+command starts with a script that `hooks.json` uses. For each hook that is
+already in the target, the script shows what it does:
+
+```text
+PreToolUse: keeps web2 hook pretooluse
+PreToolUse: replaces /home/user/.claude/hooks/cancel-waiting.sh
+```
 
 ## Sounds
 
@@ -95,3 +101,4 @@ the sound, and the next notification or tool use cancels it. Set
 
 Run `hooks/test-sound.sh` to check the mute and volume logic and
 `hooks/test-hooks.sh` to check the main agent and subagent logic.
+Run `./test-install.sh` to check the hook merge of the installer.

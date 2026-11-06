@@ -39,8 +39,22 @@ if ! jq empty "$target" 2>/dev/null; then
   exit 1
 fi
 
+# A hook command that starts with a script of hooks.json is from an earlier install.
+ours=$(printf '%s' "$fragment" | jq -c '[.hooks[][].hooks[].command | split(" ")[0]] | unique')
+defs='def ours: (.command // "" | split(" ")[0]) as $c | any($ours[]; . == $c);'
+
+jq -r --argjson ours "$ours" --argjson new "$fragment" "$defs"'
+  ($new.hooks | keys[]) as $e | (.hooks[$e] // [])[].hooks[]
+  | "\($e): \(if ours then "replaces" else "keeps" end) \(.command)"' "$target"
+
 cp "$target" "$target.bak"
-printf '%s' "$fragment" | jq -s '.[0] * .[1]' "$target" - > "$target.tmp"
+# Per event: drop the earlier klaude-notify commands, drop entries left empty,
+# then append the entries of hooks.json.
+jq --argjson ours "$ours" --argjson new "$fragment" "$defs"'
+  .hooks //= {}
+  | reduce ($new.hooks | keys[]) as $e (.;
+      .hooks[$e] = [(.hooks[$e] // [])[] | .hooks |= map(select(ours | not)) | select(.hooks != [])]
+        + $new.hooks[$e])' "$target" > "$target.tmp"
 mv "$target.tmp" "$target"
 
 echo "Installed $platform hooks and sounds to $config_dir, settings: $target (backup: $target.bak)"
